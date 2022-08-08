@@ -1,41 +1,38 @@
 import PropTypes from 'prop-types'
-import { Component } from 'react'
 
 import './footer.css'
 
-export default class Footer extends Component {
+const Footer = (props) => {
 
-  render() {
-    const { doneCount, filter, onFilterSelect, onClearCompleted } = this.props
+  const { doneCount, filter, onFilterSelect, onClearCompleted } = props
 
-    const buttonsData = [
-      { name: 'all', label: 'All' },
-      { name: 'active', label: 'Active' },
-      { name: 'completed', label: 'Completed' },
-    ]
+  const buttonsData = [
+    { name: 'all', label: 'All' },
+    { name: 'active', label: 'Active' },
+    { name: 'completed', label: 'Completed' },
+  ]
 
-    const buttons = buttonsData.map(({ name, label }) => {
-      const active = filter === name
-      const clazz = active ? 'selected' : ''
-      return (
-        <li key={name}>
-          <button className={clazz} onClick={() => onFilterSelect(name)}>
-            {label}
-          </button>
-        </li>
-      )
-    })
-
+  const buttons = buttonsData.map(({ name, label }) => {
+    const active = filter === name
+    const clazz = active ? 'selected' : ''
     return (
-      <footer className="footer">
-        <span className="todo-count">{doneCount} items left</span>
-        <ul className="filters">{buttons}</ul>
-        <button className="clear-completed" onClick={onClearCompleted}>
-          Clear completed
+      <li key={name}>
+        <button className={clazz} onClick={() => onFilterSelect(name)}>
+          {label}
         </button>
-      </footer>
+      </li>
     )
-  }
+  })
+
+  return (
+    <footer className="footer">
+      <span className="todo-count">{doneCount} items left</span>
+      <ul className="filters">{buttons}</ul>
+      <button className="clear-completed" onClick={onClearCompleted}>
+        Clear completed
+      </button>
+    </footer>
+  )
 }
 
 Footer.propTypes = {
@@ -44,3 +41,5 @@ Footer.propTypes = {
   onFilterSelect: PropTypes.func.isRequired,
   onClearCompleted: PropTypes.func.isRequired
 }
+
+export default Footer

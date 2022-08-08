@@ -1,84 +1,67 @@
 import PropTypes from 'prop-types'
-import { Component } from 'react'
+import { useState } from 'react'
 
 import './task-input.css'
 
-export default class TaskInput extends Component {
+const TaskInput = (props) => {
 
-  state = {
-    task: '',
-    minutes: '',
-    seconds: '',
-  }
+  const {getNewTask} = props
+  const [ task, setTask ] = useState('')
+  const [ minutes, setMinutes ] = useState('')
+  const [ seconds, setSeconds ] = useState('')
 
-  keyDown = (e) => {
-    
-    const {task, minutes, seconds} = this.state
-    const {getNewTask} = this.props
+  function keyDown(e) {
     if (e.key === 'Enter' && task.length > 0) {
-      
       if (Number(minutes) >= 0 && Number(seconds) >= 0) {
         getNewTask(task, minutes, seconds)
-        this.setState({
-          task: '',
-        })
+        setTask('')
       } else {
         alert('Вы ввели некорректные данные!\nПоля Min и Sec должны содержать цифры.')
-        
       }
-      this.setState({
-        minutes: '',
-        seconds: '',
-      })
+      setMinutes('')
+      setSeconds('')
     }
   }
 
-  handleSubmit = (e) => {
+  function handleSubmit(e) {
     e.preventDefault()
   }
 
-  handleChange = (e) => {
-    this.setState({
-      [e.target.name]: e.target.value
-    })
-  }
-
-  render() {
-    const {task, minutes, seconds} = this.state
-    return (
-      <header className="header">
-        <h1>todos</h1>
-        <form className="new-todo-form" onSubmit={this.handleSubmit} >
-          <input 
-            name="task" 
-            className="new-todo" 
-            placeholder="Task" 
-            onChange={this.handleChange} 
-            onKeyDown={this.keyDown} 
-            autoComplete="off"
-            value={task}/>
-          <input 
-            name="minutes" 
-            className="new-todo-form__timer" 
-            placeholder="Min" 
-            onChange={this.handleChange} 
-            onKeyDown={this.keyDown} 
-            autoComplete="off"
-            value={minutes}/>
-          <input 
-            name="seconds" 
-            className="new-todo-form__timer" 
-            placeholder="Sec" 
-            onChange={this.handleChange} 
-            onKeyDown={this.keyDown} 
-            autoComplete="off"
-            value={seconds}/>
-        </form>
-      </header>
-    )
-  }
+  return (
+    <header className="header">
+      <h1>todos</h1>
+      <form className="new-todo-form" onSubmit={handleSubmit} >
+        <input 
+          name="task" 
+          className="new-todo" 
+          placeholder="Task" 
+          onChange={(e) => setTask(e.target.value)} 
+          onKeyDown={keyDown} 
+          autoComplete="off"
+          value={task}/>
+        <input 
+          name="minutes" 
+          className="new-todo-form__timer" 
+          placeholder="Min" 
+          onChange={(e) => setMinutes(e.target.value)} 
+          onKeyDown={keyDown} 
+          autoComplete="off"
+          value={minutes}/>
+        <input 
+          name="seconds" 
+          className="new-todo-form__timer" 
+          placeholder="Sec" 
+          onChange={(e) => setSeconds(e.target.value)} 
+          onKeyDown={keyDown} 
+          autoComplete="off"
+          value={seconds}/>
+      </form>
+    </header>
+  )
 }
 
 TaskInput.propTypes = {
   getNewTask: PropTypes.func.isRequired
 }
+
+export default TaskInput
