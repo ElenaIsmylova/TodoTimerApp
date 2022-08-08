@@ -1,85 +1,72 @@
 import PropTypes from 'prop-types'
 import { formatDistanceToNow } from 'date-fns'
-import { Component } from 'react'
+import { useState } from 'react'
 
-import Timer from './../timer/timer'
+import Timer from '../timer/timer'
 
 import './task-point.css'
 
-export default class TaskPoint extends Component {
+const TaskPoint = (props) => {
 
-  state = {
-    editState: false
+  const {id, task, done, date, minutes, seconds, editTask, deleteTask, completeTask} = props
+  const [ editState, setEditState ] = useState(false)
+
+  function changeEditState() {
+    setEditState(true)
   }
 
-  whenCreate = () => {
-    return `create ${formatDistanceToNow (
-      new Date(this.props.date),
-      {includeSeconds: true})} ago`
-  }
-
-  changeEditState = () => {
-    this.setState({
-      editState: true
-    })
-  }
-
-  setEditedTask = (e) => {
+  function setEditedTask(e) {
     if (e.keyCode === 13) {
-      this.setState({
-        editState: false
-      })
+      setEditState(false)
     }
     let task = e.target.value
-    this.props.editTask(this.props.id, task)
+    editTask(id, task)
   }
 
-  onPreventDefault = (e) => {
+  function onPreventDefault(e) {
     e.preventDefault()
   }
 
-  render() {
-    const {id, task, minutes, seconds, done, deleteTask, completeTask} = this.props
-    const viewStyle = {}
-    const editStyle = {}
+  const viewStyle = {}
+  const editStyle = {}
     
-    if(this.state.editState) {
-      viewStyle.display = 'none'
-    } else {
-      editStyle.display = 'none'
-    }
-    
-    let classNames = ''
-    if (done) {
-      classNames = 'completed'
-    }
-    return (
-      <li className={classNames}>
-        <div className="view" style={viewStyle} >
-          <input className="toggle" type="checkbox"/>
-          <label>
-            <button className="description" onClick={() => completeTask(id)}>
-              {task}
-            </button>
-            <Timer minutes={minutes} seconds={seconds}/>
-            <span className="created">{this.whenCreate()}</span>
-          </label>
-          <button className="icon icon-edit" onClick={this.changeEditState}></button>
-          <button className="icon icon-destroy" onClick={() => deleteTask(id)}></button>
-        </div>
-    
-        <form onSubmit={this.onPreventDefault}>
-          <input 
-            type="text" 
-            style={editStyle}
-            defaultValue={task}
-            className="edit"
-            onKeyDown={this.setEditedTask}
-          />
-        </form>
-      </li>
-    )
+  if(editState) {
+    viewStyle.display = 'none'
+  } else {
+    editStyle.display = 'none'
   }
+    
+  let classNames = ''
+  if (done) {
+    classNames = 'completed'
+  }
+  return (
+    <li className={classNames}>
+      <div className="view" style={viewStyle} >
+        <input className="toggle" type="checkbox"/>
+        <label>
+          <button className="description" onClick={() => completeTask(id)}>
+            {task}
+          </button>
+          <Timer minutes={minutes} seconds={seconds}/>
+          <span className="created">{formatDistanceToNow(new Date(date), { addSuffix: true })}</span>
+        </label>
+        <button className="icon icon-edit" onClick={changeEditState}></button>
+        <button className="icon icon-destroy" onClick={() => deleteTask(id)}></button>
+      </div>
+
+      <form onSubmit={onPreventDefault}>
+        <input 
+          type="text" 
+          style={editStyle}
+          defaultValue={task}
+          className="edit"
+          onKeyDown={setEditedTask}
+        />
+      </form>
+    </li>
+  )
+   
 }
 
 TaskPoint.propTypes = {
@@ -93,3 +80,5 @@ TaskPoint.propTypes = {
   completeTask: PropTypes.func.isRequired,
   deleteTask: PropTypes.func.isRequired,
 }
+
+export default TaskPoint

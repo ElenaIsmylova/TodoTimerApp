@@ -1,4 +1,4 @@
-import { Component } from 'react'
+import { useState } from 'react'
 
 import TaskInput from '../task-input/task-input'
 import TaskList from '../task-list/task-list'
@@ -6,76 +6,64 @@ import Footer from '../footer/footer'
 
 import './app.css'
 
-export default class App extends Component {
+const App = () => {
 
-  state = {
-    items: [],
-    id: 1,
-    filter: 'all',
-  }
+  const [ items, setItems ] = useState([])
+  const [ id, setId ] = useState(1)
+  const [ filter, setFilter ] = useState('all')
 
-  getNewTask = (task, minutes, seconds) => {
+  function getNewTask(task, minutes, seconds) {
     const newItem = {
-      id: this.state.id,
+      id: id,
       task: task[0].toUpperCase() + task.slice(1),
       minutes: minutes,
       seconds: seconds,
       done: false,
       date: new Date(),
     }
-    const updatedItems = [...this.state.items, newItem]
-    this.setState({
-      items: updatedItems,
-      id: this.state.id + 1,
-    })
+    const updatedItems = [...items, newItem]
+    setItems(updatedItems)
+    setId(id + 1)
   }
 
-  deleteTask = (id) => {
-    const filteredItems = this.state.items.filter(point => {
+  function deleteTask(id) {
+    const filteredItems = items.filter(point => {
       return point.id !== id
     })
-    this.setState({
-      items: filteredItems
-    })
+    setItems(filteredItems)
   }
 
-  editTask = (id, task) => {
+  function editTask(id, task) {
         
-    const idx = this.state.items.findIndex(item => item.id === id)
+    const idx = items.findIndex(item => item.id === id)
 
-    const oldItem = this.state.items[idx]
+    const oldItem = items[idx]
     const newItem = {...oldItem, task: task}
 
     const newItems = [
-      ...this.state.items.slice(0, idx),
+      ...items.slice(0, idx),
       newItem,
-      ...this.state.items.slice(idx + 1)
+      ...items.slice(idx + 1)
     ]
-
-    this.setState({
-      items: newItems
-    })
+    setItems(newItems)
   }
 
-  completeTask = (id) => {
+  function completeTask(id) {
         
-    const idx = this.state.items.findIndex(item => item.id === id)
+    const idx = items.findIndex(item => item.id === id)
 
-    const oldItem = this.state.items[idx]
+    const oldItem = items[idx]
     const newItem = {...oldItem, done: !oldItem.done}
 
     const newItems = [
-      ...this.state.items.slice(0, idx),
+      ...items.slice(0, idx),
       newItem,
-      ...this.state.items.slice(idx + 1)
+      ...items.slice(idx + 1)
     ]
-
-    this.setState({
-      items: newItems
-    })
+    setItems(newItems)
   }
 
-  filterTask = (items, filter) => {
+  function filterTask(items, filter) {
     switch (filter) {
     case 'active':
       return items.filter(item => !item.done)
@@ -86,42 +74,37 @@ export default class App extends Component {
     }
   }
 
-  onFilterSelect = (filter) => {
-    this.setState({filter})
+  function onFilterSelect(filter) {
+    setFilter(filter)
   }
 
-  onClearCompleted = () => {
-    this.setState(({items}) => {
-      const activeTodo = items.filter(item => !item.done)
-      return {
-        items: activeTodo
-      }
-    })
+  function onClearCompleted() {
+    const activeTodo = items.filter(item => !item.done)
+    setItems(activeTodo)
   }
 
-  render() {
-    const {items, filter} = this.state
-    const doneCount = items.length - items.filter(item => item.done).length
-    const visibleData = this.filterTask(items, filter)
-    return (
-      <div className="todoapp">
+  const doneCount = items.length - items.filter(item => item.done).length
+  const visibleData = filterTask(items, filter)
+  return (
+    <div className="todoapp">
 
-        <TaskInput 
-          getNewTask={this.getNewTask}/>
+      <TaskInput 
+        getNewTask={getNewTask}/>
 
-        <TaskList  
-          items={visibleData}
-          editTask={this.editTask}
-          completeTask={this.completeTask}
-          deleteTask={this.deleteTask}/>
+      <TaskList  
+        items={visibleData}
+        editTask={editTask}
+        completeTask={completeTask}
+        deleteTask={deleteTask}/>
 
-        <Footer
-          filter={filter} 
-          doneCount={doneCount} 
-          onFilterSelect={this.onFilterSelect}
-          onClearCompleted={this.onClearCompleted}
-        />
-      </div>
-    )
-  }
+      <Footer
+        filter={filter} 
+        doneCount={doneCount} 
+        onFilterSelect={onFilterSelect}
+        onClearCompleted={onClearCompleted}
+      />
+    </div>
+  )
 }
+
+export default App

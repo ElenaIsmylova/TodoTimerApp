@@ -1,35 +1,32 @@
 import PropTypes from 'prop-types'
-import { Component } from 'react'
 
 import TaskPoint from '../task-point/task-point'
 
 import './task-list.css'
 
-export default class TaskList extends Component {
+const TaskList = (props) => {
 
-  render() {
-    const {items, editTask, completeTask, deleteTask} = this.props
-    const elements = items.map(point => {
-      return <TaskPoint 
-        key={point.id}
-        id={point.id}
-        task={point.task}
-        minutes={point.minutes}
-        seconds={point.seconds} 
-        date={point.date}
-        done={point.done}
-        editTask={editTask}
-        completeTask={completeTask}
-        deleteTask={deleteTask}/>
-    })
-    return (
-      <section className="main">
-        <ul className="todo-list">
-          {elements}
-        </ul>
-      </section>
-    )
-  }
+  const {items, editTask, completeTask, deleteTask} = props
+  const elements = items.map(point => {
+    return <TaskPoint 
+      key={point.id}
+      id={point.id}
+      task={point.task}
+      minutes={point.minutes}
+      seconds={point.seconds} 
+      date={point.date}
+      done={point.done}
+      editTask={editTask}
+      completeTask={completeTask}
+      deleteTask={deleteTask}/>
+  })
+  return (
+    <section className="main">
+      <ul className="todo-list">
+        {elements}
+      </ul>
+    </section>
+  )
 }
 
 TaskList.propTypes = {
@@ -38,3 +35,5 @@ TaskList.propTypes = {
   completeTask: PropTypes.func.isRequired,
   deleteTask: PropTypes.func.isRequired,
 }
+
+export default TaskList
